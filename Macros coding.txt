@@ -1,0 +1,236 @@
+Sub automation()
+    Dim LastRow As Long
+    Dim sh As Worksheet
+    Set sh = ThisWorkbook.Sheets("summary")
+   
+    'Filter Table
+    sh.AutoFilterMode = False
+    sh.UsedRange.AutoFilter 25, Criteria1:="Beam"
+        
+    'adding new sheet for beam data
+    Sheets.Add.Name = "Beam"
+    Sheets("Beam").Move After:=Sheets("Summary")
+    
+    
+    'copying from basic info
+    sh.Activate
+    LastRow = Range("A1").CurrentRegion.Rows.Count
+    Range("AX1:BD" & LastRow).Select
+       
+    Selection.Copy
+    
+    'paste beam details
+    Sheets("Beam").Select
+    ActiveSheet.Paste
+    
+    'Delete Column
+    Columns("D:D").Select
+    Application.CutCopyMode = False
+    Selection.Delete Shift:=xlToLeft
+    Range("G12").Select
+    
+    'Delete Row
+    Rows("1:1").Select
+    Selection.Delete Shift:=xlUp
+    
+    'unit conversion to meters
+    Dim nr As Long
+    Sheets("Beam").Select
+    nr = Rows.Count
+    cnt = 0
+    For x = 1 To nr
+        If Cells(x, 1) <> "" Then
+        cnt = cnt + 1
+        End If
+    Next
+    nc = cnt
+        
+    For i = 1 To nc
+        For j = 1 To 6
+            Cells(i, j) = Cells(i, j) / 1000
+        Next
+    Next
+    
+    'Filter Table
+    sh.AutoFilterMode = False
+    sh.UsedRange.AutoFilter 25, Criteria1:="Column"
+        
+    'adding new sheet for Column aki data
+    Sheets.Add.Name = "Column"
+    Sheets("Column").Move After:=Sheets("Beam")
+    
+    
+    'copying from basic info
+    sh.Activate
+    LastRow = Range("A1").CurrentRegion.Rows.Count
+    Range("E1:G" & LastRow).Select
+    Selection.Copy
+    
+    'paste column details
+    Sheets("Column").Select
+    ActiveSheet.Paste
+    
+    'Sorting
+    Selection.AutoFilter
+    ActiveWorkbook.Worksheets("Column").AutoFilter.Sort.SortFields.Clear
+    ActiveWorkbook.Worksheets("Column").AutoFilter.Sort.SortFields.Add Key:= _
+        Range("C1"), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:= _
+        xlSortNormal
+    With ActiveWorkbook.Worksheets("Column").AutoFilter.Sort
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+    ActiveWorkbook.Worksheets("Column").AutoFilter.Sort.SortFields.Clear
+    ActiveWorkbook.Worksheets("Column").AutoFilter.Sort.SortFields.Add Key:= _
+        Range("B1"), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:= _
+        xlSortNormal
+    With ActiveWorkbook.Worksheets("Column").AutoFilter.Sort
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+    ActiveWorkbook.Worksheets("Column").AutoFilter.Sort.SortFields.Clear
+    ActiveWorkbook.Worksheets("Column").AutoFilter.Sort.SortFields.Add Key:= _
+        Range("A1"), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:= _
+        xlSortNormal
+    With ActiveWorkbook.Worksheets("Column").AutoFilter.Sort
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+    
+    
+    
+    'Filter Table
+    sh.AutoFilterMode = False
+    sh.UsedRange.AutoFilter 25, Criteria1:="Column end"
+    
+    'adding new sheet for Column end aki data
+    Sheets.Add.Name = "Column end"
+    Sheets("Column end").Move After:=Sheets("Column")
+    
+    'copying from basic info
+    sh.Activate
+    LastRow = Range("A1").CurrentRegion.Rows.Count
+    Range("E1:G" & LastRow).Select
+    Selection.Copy
+    
+    'paste column details
+    Sheets("Column end").Select
+    Range("A1").Select
+    ActiveSheet.Paste
+    
+    'sorting
+    Selection.AutoFilter
+    ActiveWorkbook.Worksheets("Column end").AutoFilter.Sort.SortFields.Clear
+    ActiveWorkbook.Worksheets("Column end").AutoFilter.Sort.SortFields.Add Key _
+        :=Range("C1"), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:= _
+        xlSortNormal
+    With ActiveWorkbook.Worksheets("Column end").AutoFilter.Sort
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+    ActiveWorkbook.Worksheets("Column end").AutoFilter.Sort.SortFields.Clear
+    ActiveWorkbook.Worksheets("Column end").AutoFilter.Sort.SortFields.Add Key _
+        :=Range("B1"), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:= _
+        xlSortNormal
+    With ActiveWorkbook.Worksheets("Column end").AutoFilter.Sort
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+    ActiveWorkbook.Worksheets("Column end").AutoFilter.Sort.SortFields.Clear
+    ActiveWorkbook.Worksheets("Column end").AutoFilter.Sort.SortFields.Add Key _
+        :=Range("A1"), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:= _
+        xlSortNormal
+    With ActiveWorkbook.Worksheets("Column end").AutoFilter.Sort
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+    
+    'adding new sheet for Column end data
+    Sheets.Add.Name = "Column Final"
+    Sheets("Column Final").Move After:=Sheets("Column end")
+    
+    'creating column sheet
+    Sheets("Column").Select
+    Columns("A:C").Select
+    Selection.Copy
+    Sheets("Column Final").Select
+    ActiveSheet.Paste
+    
+    Sheets("Column end").Select
+    Columns("A:C").Select
+    Selection.Copy
+    Sheets("Column Final").Select
+    Range("D1").Select
+    ActiveSheet.Paste
+    
+    'Delete sheets
+    Sheets(Array("Column", "Column end")).Select
+    ActiveWindow.SelectedSheets.Delete
+       
+    
+    'Delete Row
+    Rows("1:1").Select
+    Selection.Delete Shift:=xlUp
+        
+    
+    'unit conversion to meters
+    Dim nx As Long
+    Sheets("Column Final").Select
+    nx = Rows.Count
+    cnt = 0
+    For x = 1 To nx
+        If Cells(x, 1) <> "" Then
+        Count = Count + 1
+        End If
+    Next
+    ny = Count
+        
+    For i = 1 To ny
+        For j = 1 To 6
+            Cells(i, j) = Cells(i, j) / 1000
+        Next
+    Next
+    
+    
+    'consolidate coordinates to single sheet
+    Sheets.Add.Name = "overall"
+    Sheets("overall").Move After:=Sheets("Column Final")
+    
+    Cells(1, 1) = "start x"
+    Cells(1, 2) = "start y"
+    Cells(1, 3) = "start z"
+    Cells(1, 4) = "end x"
+    Cells(1, 5) = "end y"
+    Cells(1, 6) = "end z"
+    
+    For i = 1 To nc
+        For j = 1 To 6
+            Cells(i + 1, j) = Sheets("Beam").Cells(i, j)
+        Next
+    Next
+    
+    For i = 1 To ny
+        For j = 1 To 6
+            Cells(nc + i + 1, j) = Sheets("Column Final").Cells(i, j)
+        Next
+    Next
+
+End Sub
